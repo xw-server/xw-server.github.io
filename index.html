@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xw server — Ванильный Minecraft сервер</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --background: oklch(0.145 0 0);
+      --foreground: oklch(0.985 0 0);
+      --card: oklch(0.205 0 0);
+      --card-foreground: oklch(0.985 0 0);
+      --popover: oklch(0.205 0 0);
+      --popover-foreground: oklch(0.985 0 0);
+      --primary: oklch(0.922 0 0);
+      --primary-foreground: oklch(0.205 0 0);
+      --secondary: oklch(0.269 0 0);
+      --secondary-foreground: oklch(0.985 0 0);
+      --muted: oklch(0.269 0 0);
+      --muted-foreground: oklch(0.708 0 0);
+      --accent: oklch(0.269 0 0);
+      --accent-foreground: oklch(0.985 0 0);
+      --destructive: oklch(0.704 0.191 22.216);
+      --border: oklch(1 0 0 / 10%);
+      --input: oklch(1 0 0 / 15%);
+      --ring: oklch(0.556 0 0);
+      --radius: 0.625rem;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: #7ecf8a;
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    a:hover {
+      color: #a8e6b2;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 100;
+      background: oklch(0.145 0 0 / 0.8);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #7ecf8a;
+    }
+    .logo span {
+      color: var(--foreground);
+    }
+
+    nav {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+    nav a {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      transition: color 0.2s;
+    }
+    nav a:hover {
+      color: var(--foreground);
+    }
+
+    .btn {
+      display: inline-block;
+      padding: 10px 24px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      border: none;
+      background: #7ecf8a;
+      color: #0e0e10;
+    }
+    .btn:hover {
+      background: #a8e6b2;
+      transform: translateY(-1px);
+    }
+    .btn-outline {
+      background: transparent;
+      color: var(--foreground);
+      border: 1px solid var(--border);
+    }
+    .btn-outline:hover {
+      background: var(--secondary);
+      transform: translateY(-1px);
+    }
+
+    /* Hero */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 70%;
+      height: 200%;
+      background: radial-gradient(ellipse at center, oklch(0.3 0.1 150 / 0.1), transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 640px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      padding: 6px 16px;
+      border-radius: 100px;
+      background: oklch(0.3 0.1 150 / 0.2);
+      border: 1px solid oklch(0.5 0.15 150 / 0.2);
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #7ecf8a;
+      letter-spacing: 0.3px;
+      margin-bottom: 20px;
+    }
+
+    .hero h1 {
+      font-size: 4rem;
+      font-weight: 800;
+      letter-spacing: -2px;
+      line-height: 1.1;
+      margin-bottom: 16px;
+    }
+    .hero h1 span {
+      color: #7ecf8a;
+    }
+
+    .hero p {
+      font-size: 1.125rem;
+      color: var(--muted-foreground);
+      max-width: 480px;
+      margin-bottom: 32px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 32px;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+    }
+    .hero-stats-item {
+      display: flex;
+      flex-direction: column;
+    }
+    .hero-stats-item .value {
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--foreground);
+    }
+    .hero-stats-item .label {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .ip-copy {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 10px 18px;
+      font-family: 'Inter', monospace;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--foreground);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .ip-copy:hover {
+      border-color: #7ecf8a;
+    }
+    .ip-copy .copied {
+      color: #7ecf8a;
+      font-size: 0.75rem;
+      font-weight: 400;
+    }
+
+    /* Sections */
+    section {
+      padding: 80px 0;
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+    .section-subtitle {
+      color: var(--muted-foreground);
+      font-size: 1.125rem;
+      max-width: 560px;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+    .section-header.center {
+      text-align: center;
+    }
+    .section-header.center .section-subtitle {
+      margin: 0 auto;
+    }
+
+    /* About */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+    }
+
+    .about-text p {
+      color: var(--muted-foreground);
+      margin-bottom: 16px;
+    }
+    .about-text p:last-child {
+      margin-bottom: 0;
+    }
+
+    .about-features {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .feature-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 20px;
+      transition: border-color 0.2s;
+    }
+    .feature-card:hover {
+      border-color: oklch(0.5 0.15 150 / 0.3);
+    }
+    .feature-card h4 {
+      font-size: 0.875rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .feature-card p {
+      font-size: 0.875rem;
+      color: var(--muted-foreground);
+    }
+
+    /* Online Status */
+    .status-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 20px;
+    }
+
+    .status-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .status-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #7ecf8a;
+      animation: pulse 2s infinite;
+    }
+    .status-dot.offline {
+      background: var(--destructive);
+      animation: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.4; }
+    }
+
+    .status-info h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+    }
+    .status-info p {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+    }
+
+    .status-players {
+      text-align: right;
+    }
+    .status-players .count {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #7ecf8a;
+    }
+    .status-players .label {
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    /* Gallery */
+    .gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .gallery-item {
+      aspect-ratio: 16 / 9;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      transition: border-color 0.2s;
+      cursor: pointer;
+    }
+    .gallery-item:hover {
+      border-color: oklch(0.5 0.15 150 / 0.3);
+    }
+    .gallery-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .gallery-placeholder {
+      background: var(--card);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+    .gallery-placeholder .icon {
+      font-size: 2rem;
+      opacity: 0.3;
+    }
+
+    /* Contacts */
+    .contacts-grid {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .contact-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 24px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      transition: all 0.2s;
+    }
+    .contact-link:hover {
+      border-color: #7ecf8a;
+      transform: translateY(-2px);
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      nav {
+        gap: 16px;
+      }
+      nav a {
+        font-size: 0.75rem;
+      }
+
+      .hero h1 {
+        font-size: 2.5rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+
+      .about-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+
+      .about-features {
+        grid-template-columns: 1fr;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .status-card {
+        flex-direction: column;
+        align-items: stretch;
+        text-align: center;
+      }
+      .status-left {
+        justify-content: center;
+      }
+      .status-players {
+        text-align: center;
+      }
+
+      .hero-stats {
+        gap: 24px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header .container {
+        flex-direction: column;
+        gap: 8px;
+      }
+      nav {
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .gallery-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+      }
+      .hero-actions .btn {
+        width: 100%;
+        text-align: center;
+      }
+
+      .contacts-grid {
+        flex-direction: column;
+      }
+      .contact-link {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container">
+    <div class="logo">xw<span>server</span></div>
+    <nav>
+      <a href="#about">О сервере</a>
+      <a href="#status">Статус</a>
+      <a href="#gallery">Галерея</a>
+      <a href="#contacts">Контакты</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+  <div class="container">
+    <div class="hero-content">
+      <div class="hero-badge">Fabric 1.21.11</div>
+      <h1>xw <span>server</span></h1>
+      <p>Ванильное выживание без привилегий. Честная игра, дружное сообщество и полная свобода действий.</p>
+      <div class="hero-actions">
+        <button class="btn" onclick="copyIP()">Подключиться</button>
+        <span class="ip-copy" onclick="copyIP()">
+          nnuwu.mcsh.io
+          <span class="copied" id="copiedText"></span>
+        </span>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stats-item">
+          <span class="value" id="onlineCount">--</span>
+          <span class="label">Игроков онлайн</span>
+        </div>
+        <div class="hero-stats-item">
+          <span class="value">24/7</span>
+          <span class="label">Доступность</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- About -->
+<section id="about">
+  <div class="container">
+    <div class="section-header">
+      <h2 class="section-title">О сервере</h2>
+      <p class="section-subtitle">Честное ванильное выживание для тех, кто ценит настоящий Minecraft.</p>
+    </div>
+    <div class="about-grid">
+      <div class="about-text">
+        <p>
+          xw server — это ванильный Minecraft сервер на Fabric 1.21.11, созданный для тех, кто устал от донатных привилегий и нечестной игры. Здесь нет платных преимуществ, администраторского вмешательства в игровой процесс и бесконечных правил.
+        </p>
+        <p>
+          Мы стремимся сохранить дух оригинального Minecraft: выживание, строительство, исследования и взаимодействие с другими игроками. Сервер работает круглосуточно, а администрация всегда на связи.
+        </p>
+      </div>
+      <div class="about-features">
+        <div class="feature-card">
+          <h4>Ванильный геймплей</h4>
+          <p>Никаких модов, плагинов и изменений механик</p>
+        </div>
+        <div class="feature-card">
+          <h4>Без доната</h4>
+          <p>Все игроки равны, привилегии не продаются</p>
+        </div>
+        <div class="feature-card">
+          <h4>Активное комьюнити</h4>
+          <p>Дружелюбные игроки и отзывчивая администрация</p>
+        </div>
+        <div class="feature-card">
+          <h4>Стабильный хостинг</h4>
+          <p>Сервер работает 24/7 с минимальными задержками</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Status -->
+<section id="status">
+  <div class="container">
+    <div class="section-header center">
+      <h2 class="section-title">Статус сервера</h2>
+      <p class="section-subtitle">Актуальная информация о доступности и количестве игроков</p>
+    </div>
+    <div class="status-card">
+      <div class="status-left">
+        <div class="status-dot" id="statusDot"></div>
+        <div class="status-info">
+          <h3 id="statusText">Проверка...</h3>
+          <p>Версия: Fabric 1.21.11</p>
+        </div>
+      </div>
+      <div class="status-players">
+        <div class="count" id="onlineCountLarge">--</div>
+        <div class="label">Игроков онлайн</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Gallery -->
+<section id="gallery">
+  <div class="container">
+    <div class="section-header center">
+      <h2 class="section-title">Галерея</h2>
+      <p class="section-subtitle">Скриншоты с сервера и постройки игроков</p>
+    </div>
+    <div class="gallery-grid">
+      <div class="gallery-item gallery-placeholder">
+        <span class="icon">[ ]</span>
+        <span>Скриншот 1</span>
+      </div>
+      <div class="gallery-item gallery-placeholder">
+        <span class="icon">[ ]</span>
+        <span>Скриншот 2</span>
+      </div>
+      <div class="gallery-item gallery-placeholder">
+        <span class="icon">[ ]</span>
+        <span>Скриншот 3</span>
+      </div>
+      <div class="gallery-item gallery-placeholder">
+        <span class="icon">[ ]</span>
+        <span>Скриншот 4</span>
+      </div>
+      <div class="gallery-item gallery-placeholder">
+        <span class="icon">[ ]</span>
+        <span>Скриншот 5</span>
+      </div>
+      <div class="gallery-item gallery-placeholder">
+        <span class="icon">[ ]</span>
+        <span>Скриншот 6</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Contacts -->
+<section id="contacts">
+  <div class="container">
+    <div class="section-header center">
+      <h2 class="section-title">Контакты</h2>
+      <p class="section-subtitle">Присоединяйся к сообществу xw server</p>
+    </div>
+    <div class="contacts-grid" style="justify-content: center;">
+      <a href="#" class="contact-link" target="_blank">Discord</a>
+      <a href="#" class="contact-link" target="_blank">VK</a>
+      <span class="contact-link" style="cursor: default; border-color: transparent;">
+        IP: nnuwu.mcsh.io
+      </span>
+    </div>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer>
+  <div class="container">
+    <p>xw server — Ванильный Minecraft сервер. Неофициальный проект, не связан с Mojang.</p>
+  </div>
+</footer>
+
+<script>
+  const SERVER_IP = 'nnuwu.mcsh.io';
+
+  function copyIP() {
+    navigator.clipboard.writeText(SERVER_IP).then(() => {
+      const el = document.getElementById('copiedText');
+      el.textContent = 'Скопировано';
+      setTimeout(() => { el.textContent = ''; }, 2000);
+    });
+  }
+
+  async function fetchServerStatus() {
+    const dot = document.getElementById('statusDot');
+    const statusText = document.getElementById('statusText');
+    const onlineCount = document.getElementById('onlineCount');
+    const onlineCountLarge = document.getElementById('onlineCountLarge');
+
+    try {
+      // Используем публичное API для получения статуса сервера
+      const response = await fetch(`https://api.mcsrvstat.us/2/${SERVER_IP}`);
+      const data = await response.json();
+
+      if (data.online) {
+        dot.className = 'status-dot';
+        statusText.textContent = 'Сервер работает';
+        const players = data.players?.online || 0;
+        onlineCount.textContent = players;
+        onlineCountLarge.textContent = players;
+      } else {
+        dot.className = 'status-dot offline';
+        statusText.textContent = 'Сервер недоступен';
+        onlineCount.textContent = '--';
+        onlineCountLarge.textContent = '--';
+      }
+    } catch (error) {
+      dot.className = 'status-dot offline';
+      statusText.textContent = 'Ошибка проверки';
+      onlineCount.textContent = '--';
+      onlineCountLarge.textContent = '--';
+    }
+  }
+
+  fetchServerStatus();
+  setInterval(fetchServerStatus, 60000);
+</script>
+
+</body>
+</html>
