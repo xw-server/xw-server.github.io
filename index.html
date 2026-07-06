@@ -71,15 +71,16 @@
       padding: 0 24px;
     }
 
-    /* Header */
+    /* Header - закреплен */
     header {
       position: fixed;
       top: 0;
       left: 0;
       right: 0;
-      z-index: 100;
+      z-index: 1000;
       background: oklch(0.145 0 0 / 0.8);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       border-bottom: 1px solid var(--border);
       padding: 14px 0;
       transition: all 0.3s ease;
@@ -437,38 +438,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* Contacts */
-    .contacts-section {
-      padding: 80px 0 40px 0;
-    }
-
-    .contacts-grid {
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-    }
-
-    .contact-link {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      padding: 12px 24px;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
-      font-weight: 600;
-      font-size: 0.875rem;
-      transition: all 0.3s ease;
-      color: var(--foreground);
-    }
-    .contact-link:hover {
-      border-color: #7ecf8a;
-      transform: translateY(-4px);
-      box-shadow: 0 8px 24px rgba(126, 207, 138, 0.15);
-      color: var(--foreground);
-    }
-
     /* Footer */
     footer {
       border-top: 1px solid var(--border);
@@ -476,6 +445,7 @@
       text-align: center;
       color: var(--muted-foreground);
       font-size: 0.875rem;
+      scroll-margin-top: 80px;
     }
 
     footer a {
@@ -494,7 +464,7 @@
       opacity: 0.7;
     }
 
-    /* Scroll top button */
+    /* Scroll top button - закреплен */
     .scroll-top {
       position: fixed;
       bottom: 30px;
@@ -512,15 +482,17 @@
       visibility: hidden;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 4px 12px rgba(126, 207, 138, 0.3);
-      z-index: 99;
+      z-index: 999;
       display: flex;
       align-items: center;
       justify-content: center;
+      pointer-events: none;
     }
 
     .scroll-top.visible {
       opacity: 1;
       visibility: visible;
+      pointer-events: auto;
     }
 
     .scroll-top:hover {
@@ -604,14 +576,6 @@
       .hero-actions .btn {
         width: 100%;
         text-align: center;
-        justify-content: center;
-      }
-
-      .contacts-grid {
-        flex-direction: column;
-      }
-      .contact-link {
-        width: 100%;
         justify-content: center;
       }
     }
@@ -720,24 +684,8 @@
   </div>
 </section>
 
-<!-- Contacts -->
-<section id="contacts" class="contacts-section">
-  <div class="container">
-    <div class="section-header center">
-      <h2 class="section-title">Связаться с нами</h2>
-      <p class="section-subtitle">По всем вопросам и предложениям</p>
-    </div>
-    <div class="contacts-grid">
-      <a href="mailto:xo4x4ww@gmail.com" class="contact-link">
-        <i data-lucide="mail" size="18"></i>
-        xo4x4ww@gmail.com
-      </a>
-    </div>
-  </div>
-</section>
-
 <!-- Footer -->
-<footer>
+<footer id="contacts">
   <div class="container">
     <p>По вопросам: <a href="mailto:xo4x4ww@gmail.com">xo4x4ww@gmail.com</a></p>
     <div class="footer-disclaimer">
