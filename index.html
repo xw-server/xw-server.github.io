@@ -47,13 +47,6 @@
       color: var(--foreground);
       line-height: 1.6;
       -webkit-font-smoothing: antialiased;
-      opacity: 0;
-      animation: fadeIn 0.8s ease forwards;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
     }
 
     a {
@@ -71,13 +64,11 @@
       padding: 0 24px;
     }
 
-    /* Header - закреплен */
+    /* Меню (sticky) */
     header {
-      position: fixed;
+      position: sticky;
       top: 0;
-      left: 0;
-      right: 0;
-      z-index: 1000;
+      z-index: 9999;
       background: oklch(0.145 0 0 / 0.8);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
@@ -156,14 +147,13 @@
       transform: translateY(0);
     }
 
-    /* Hero */
     .hero {
       min-height: 100vh;
       display: flex;
       align-items: center;
-      padding-top: 80px;
       position: relative;
       overflow: hidden;
+      padding: 40px 0;
     }
 
     .hero::before {
@@ -285,7 +275,6 @@
       font-weight: 400;
     }
 
-    /* Sections */
     section {
       padding: 80px 0;
       opacity: 0;
@@ -320,7 +309,6 @@
       margin: 0 auto;
     }
 
-    /* About */
     .about-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -368,7 +356,6 @@
       color: var(--muted-foreground);
     }
 
-    /* Status */
     .status-card {
       background: var(--card);
       border: 1px solid var(--border);
@@ -438,7 +425,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* Footer */
     footer {
       border-top: 1px solid var(--border);
       padding: 32px 0;
@@ -464,7 +450,6 @@
       opacity: 0.7;
     }
 
-    /* Scroll top button - закреплен */
     .scroll-top {
       position: fixed;
       bottom: 30px;
@@ -482,7 +467,7 @@
       visibility: hidden;
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       box-shadow: 0 4px 12px rgba(126, 207, 138, 0.3);
-      z-index: 999;
+      z-index: 9999;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -505,7 +490,6 @@
       transform: scale(0.95);
     }
 
-    /* Responsive */
     @media (max-width: 768px) {
       nav {
         gap: 16px;
@@ -597,7 +581,6 @@
   </div>
 </header>
 
-<!-- Hero -->
 <section class="hero">
   <div class="container">
     <div class="hero-content">
@@ -631,7 +614,6 @@
   </div>
 </section>
 
-<!-- About -->
 <section id="about">
   <div class="container">
     <div class="section-header">
@@ -661,7 +643,6 @@
   </div>
 </section>
 
-<!-- Status -->
 <section id="status">
   <div class="container">
     <div class="section-header center">
@@ -684,7 +665,6 @@
   </div>
 </section>
 
-<!-- Footer -->
 <footer id="contacts">
   <div class="container">
     <p>По вопросам: <a href="mailto:xo4x4ww@gmail.com">xo4x4ww@gmail.com</a></p>
@@ -695,7 +675,6 @@
   </div>
 </footer>
 
-<!-- Scroll top button -->
 <button class="scroll-top" id="scrollTopBtn" onclick="scrollToTop()">
   <i data-lucide="arrow-up" size="20"></i>
 </button>
@@ -703,7 +682,6 @@
 <script>
   const SERVER_IP = 'nnuwu.mcsh.io';
 
-  // Инициализация Lucide
   lucide.createIcons();
 
   function copyIP() {
@@ -748,12 +726,12 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // Показывать/скрывать кнопку при прокрутке
   window.addEventListener('scroll', function() {
     const btn = document.getElementById('scrollTopBtn');
     const header = document.getElementById('header');
-    
-    if (window.scrollY > 400) {
+
+    // Появляется при прокрутке на 250px (было 400px)
+    if (window.scrollY > 250) {
       btn.classList.add('visible');
     } else {
       btn.classList.remove('visible');
@@ -766,7 +744,6 @@
     }
   });
 
-  // Анимация появления секций при скролле
   const sections = document.querySelectorAll('section');
   const observer = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
