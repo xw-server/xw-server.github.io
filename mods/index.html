@@ -1,1 +1,647 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>xw server — Сборки и моды</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --background: oklch(0.145 0 0);
+      --foreground: oklch(0.985 0 0);
+      --card: oklch(0.205 0 0);
+      --card-foreground: oklch(0.985 0 0);
+      --popover: oklch(0.205 0 0);
+      --popover-foreground: oklch(0.985 0 0);
+      --primary: oklch(0.922 0 0);
+      --primary-foreground: oklch(0.205 0 0);
+      --secondary: oklch(0.269 0 0);
+      --secondary-foreground: oklch(0.985 0 0);
+      --muted: oklch(0.269 0 0);
+      --muted-foreground: oklch(0.708 0 0);
+      --accent: oklch(0.269 0 0);
+      --accent-foreground: oklch(0.985 0 0);
+      --destructive: oklch(0.704 0.191 22.216);
+      --border: oklch(1 0 0 / 10%);
+      --input: oklch(1 0 0 / 15%);
+      --ring: oklch(0.556 0 0);
+      --radius: 0.625rem;
+    }
 
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--background);
+      color: var(--foreground);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+      padding-top: 80px;
+    }
+
+    a {
+      color: #7ecf8a;
+      text-decoration: none;
+      transition: color 0.3s ease;
+    }
+    a:hover {
+      color: #a8e6b2;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 9999;
+      background: oklch(0.145 0 0 / 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 14px 0;
+      transition: all 0.3s ease;
+    }
+
+    header.scrolled {
+      background: oklch(0.145 0 0 / 0.95);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    }
+
+    header .container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #7ecf8a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: transform 0.3s ease;
+    }
+    .logo:hover {
+      transform: scale(1.02);
+    }
+    .logo span {
+      color: var(--foreground);
+    }
+
+    nav {
+      display: flex;
+      gap: 28px;
+      align-items: center;
+    }
+    nav a {
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--muted-foreground);
+      transition: color 0.3s ease;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    nav a:hover {
+      color: var(--foreground);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 24px;
+      border-radius: var(--radius);
+      font-weight: 600;
+      font-size: 0.875rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: none;
+      text-decoration: none;
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+    }
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-green {
+      background: #7ecf8a;
+      color: #0e0e10;
+    }
+    .btn-green:hover {
+      background: #a8e6b2;
+      box-shadow: 0 4px 12px rgba(126, 207, 138, 0.3);
+      color: #0e0e10;
+    }
+
+    .btn-gray {
+      background: oklch(0.269 0 0);
+      color: var(--foreground);
+    }
+    .btn-gray:hover {
+      background: oklch(0.35 0 0);
+      box-shadow: 0 4px 12px rgba(255, 255, 255, 0.05);
+      color: var(--foreground);
+    }
+
+    .btn-sm {
+      padding: 4px 12px;
+      font-size: 0.7rem;
+      white-space: nowrap;
+    }
+
+    section {
+      padding: 80px 0;
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.6s ease;
+      scroll-margin-top: 80px;
+    }
+
+    section.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .section-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      letter-spacing: -1px;
+      margin-bottom: 12px;
+    }
+    .section-subtitle {
+      color: var(--muted-foreground);
+      font-size: 1.125rem;
+      max-width: 560px;
+    }
+
+    .section-header {
+      margin-bottom: 48px;
+    }
+    .section-header.center {
+      text-align: center;
+    }
+    .section-header.center .section-subtitle {
+      margin: 0 auto;
+    }
+
+    .mods-warning {
+      background: var(--card);
+      border: 1px solid #f59e0b;
+      border-radius: var(--radius);
+      padding: 24px 32px;
+      margin-bottom: 32px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .mods-warning .icon {
+      color: #f59e0b;
+      flex-shrink: 0;
+    }
+    .mods-warning p {
+      color: var(--muted-foreground);
+      font-size: 0.95rem;
+      flex: 1;
+    }
+    .mods-warning strong {
+      color: var(--foreground);
+    }
+
+    .mods-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .mods-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      transition: all 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .mods-card:hover {
+      border-color: oklch(0.5 0.15 150 / 0.3);
+      transform: translateY(-2px);
+    }
+    .mods-card h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mods-card p {
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      margin-bottom: 16px;
+      flex: 1;
+    }
+    .mods-card .btn-group {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: auto;
+    }
+
+    .mods-list {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 28px;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .mods-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .mods-list::-webkit-scrollbar-track {
+      background: var(--background);
+      border-radius: 3px;
+    }
+    .mods-list::-webkit-scrollbar-thumb {
+      background: #7ecf8a;
+      border-radius: 3px;
+    }
+    .mods-list h3 {
+      font-size: 1.125rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mods-list .mods-subtitle {
+      font-size: 0.8rem;
+      color: var(--muted-foreground);
+      margin-bottom: 16px;
+    }
+    .mods-list ul {
+      list-style: none;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px 16px;
+    }
+    .mods-list ul li {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+      color: var(--muted-foreground);
+    }
+    .mods-list ul li .mod-name {
+      flex: 1;
+      font-size: 0.78rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mods-list ul li .mod-link-btn {
+      background: #7ecf8a;
+      color: #0e0e10;
+      border: none;
+      border-radius: 4px;
+      padding: 2px 10px;
+      font-size: 0.65rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      flex-shrink: 0;
+    }
+    .mods-list ul li .mod-link-btn:hover {
+      background: #a8e6b2;
+      transform: translateY(-1px);
+    }
+
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      color: var(--muted-foreground);
+      font-weight: 600;
+      margin-bottom: 24px;
+      transition: color 0.3s ease;
+    }
+    .back-link:hover {
+      color: var(--foreground);
+    }
+
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 32px 0;
+      text-align: center;
+      color: var(--muted-foreground);
+      font-size: 0.875rem;
+      scroll-margin-top: 80px;
+    }
+
+    footer a {
+      color: #7ecf8a;
+      font-weight: 600;
+      transition: all 0.3s ease;
+    }
+    footer a:hover {
+      color: #a8e6b2;
+    }
+
+    footer .footer-disclaimer {
+      margin-top: 8px;
+      font-size: 0.75rem;
+      color: var(--muted-foreground);
+      opacity: 0.7;
+    }
+
+    .scroll-top {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: #7ecf8a;
+      color: #0e0e10;
+      border: none;
+      font-size: 1.25rem;
+      font-weight: 700;
+      cursor: pointer;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(126, 207, 138, 0.3);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .scroll-top.visible {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+    }
+
+    .scroll-top:hover {
+      background: #a8e6b2;
+      transform: translateY(-4px) scale(1.05);
+      box-shadow: 0 8px 24px rgba(126, 207, 138, 0.4);
+    }
+
+    .scroll-top:active {
+      transform: scale(0.95);
+    }
+
+    @media (max-width: 768px) {
+      nav {
+        gap: 16px;
+      }
+      nav a {
+        font-size: 0.75rem;
+      }
+
+      .mods-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .mods-list ul {
+        grid-template-columns: 1fr;
+      }
+
+      .section-title {
+        font-size: 1.75rem;
+      }
+
+      .scroll-top {
+        bottom: 20px;
+        right: 20px;
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+      }
+
+      .mods-warning {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header .container {
+        flex-direction: column;
+        gap: 8px;
+      }
+      nav {
+        gap: 12px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+
+      .mods-card .btn-group {
+        flex-direction: column;
+      }
+      .mods-card .btn-group .btn {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<header id="header">
+  <div class="container">
+    <div class="logo">
+      <i data-lucide="pickaxe" size="20" color="#7ecf8a"></i>
+      xw<span>server</span>
+    </div>
+    <nav>
+      <a href="/"><i data-lucide="home" size="16"></i>Главная</a>
+      <a href="/mods/"><i data-lucide="package" size="16"></i>Сборки</a>
+      <a href="/#status"><i data-lucide="activity" size="16"></i>Статус</a>
+      <a href="/#contacts"><i data-lucide="mail" size="16"></i>Связаться</a>
+    </nav>
+  </div>
+</header>
+
+<section id="mods">
+  <div class="container">
+    <a href="/" class="back-link">
+      <i data-lucide="arrow-left" size="16"></i>На главную
+    </a>
+
+    <div class="section-header">
+      <h2 class="section-title">Сборки и моды</h2>
+      <p class="section-subtitle">Скачай готовую сборку или установи моды вручную.</p>
+    </div>
+
+    <div class="mods-warning">
+      <div class="icon">
+        <i data-lucide="alert-triangle" size="28"></i>
+      </div>
+      <p>
+        <strong>Внимание!</strong> Сервер работает только с модами. 
+        Без установки всех модов из списка подключиться не получится.
+      </p>
+    </div>
+
+    <div class="mods-grid">
+      <!-- Карточка со сборками -->
+      <div class="mods-card">
+        <h3>
+          <i data-lucide="download" size="20" color="#7ecf8a"></i>
+          Скачать сборку
+        </h3>
+        <div class="btn-group">
+          <a href="#" class="btn btn-green" onclick="alert('Скачивание сборки только с нужными модами...')">
+            <i data-lucide="download" size="16"></i>Только нужные моды
+          </a>
+          <a href="#" class="btn btn-gray" onclick="alert('Скачивание xw\'s Vanilla+...')">
+            <i data-lucide="download" size="16"></i>xw's Vanilla+
+          </a>
+        </div>
+      </div>
+
+      <!-- Список модов -->
+      <div class="mods-list">
+        <h3>
+          <i data-lucide="list" size="20" color="#7ecf8a"></i>
+          Список модов
+        </h3>
+        <div class="mods-subtitle">если хотите скачать сами</div>
+        <ul>
+          <li><span class="mod-name">Automatic Doors</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Automatic Doors')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Belt-borne Lanterns</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Belt-borne Lanterns')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Blockomorph</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Blockomorph')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">BoatView360</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на BoatView360')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Chisels & Bits</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Chisels & Bits')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Collective</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Collective')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Cosmetica</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Cosmetica')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Craft Tridents</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Craft Tridents')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">CreativeCore</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на CreativeCore')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Elytra Recipe Vanilla</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Elytra Recipe Vanilla')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Enhanced Groups</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Enhanced Groups')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Fabric API</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Fabric API')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Fabric Language Kotlin</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Fabric Language Kotlin')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">ItemPhysic</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на ItemPhysic')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">MidnightLib</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на MidnightLib')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Mob Heads</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Mob Heads')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Mod Menu</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Mod Menu')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">More Crafting Tables</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на More Crafting Tables')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Plasmo Voice</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Plasmo Voice')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Polymer</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Polymer')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Potion Stacking</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Potion Stacking')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Plasmo Voice Addon: Sculk</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Plasmo Voice Addon: Sculk')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Quad</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Quad')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Respect My Trims</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Respect My Trims')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Roadweaver</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Roadweaver')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Smaller Nether Portals</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Smaller Nether Portals')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Snowballs Freeze Mobs</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Snowballs Freeze Mobs')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Spawn Animations Compatibilities</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Spawn Animations Compatibilities')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Spawn Animations</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Spawn Animations')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Styled Playerlist</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Styled Playerlist')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">TalkBalloons</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на TalkBalloons')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Too Cheap</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Too Cheap')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Tool Trims</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Tool Trims')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Tree Vein Miner</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Tree Vein Miner')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Visual Jukebox</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Visual Jukebox')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Simple Voice Chat</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Simple Voice Chat')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Wall Lanterns</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Wall Lanterns')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Xaero's Minimap</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Xaero\'s Minimap')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+          <li><span class="mod-name">Xaero's World Map</span><a href="#" class="mod-link-btn" onclick="alert('Ссылка на Xaero\'s World Map')"><i data-lucide="external-link" size="10"></i>Скачать</a></li>
+        </ul>
+        <p style="margin-top: 12px; font-size: 0.75rem; color: var(--muted-foreground);">
+          Все моды распространяются бесплатно. Ссылки ведут на официальные страницы.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p>По вопросам: <a href="mailto:xo4x4ww@gmail.com">xo4x4ww@gmail.com</a></p>
+    <div class="footer-disclaimer">
+      xw server — независимый проект. Не аффилирован с Mojang AB или Microsoft Corporation. 
+      Minecraft — зарегистрированная торговая марка Mojang AB.
+      <br />
+      Все моды распространяются бесплатно. Ссылки ведут на официальные страницы Modrinth.
+    </div>
+  </div>
+</footer>
+
+<button class="scroll-top" id="scrollTopBtn" onclick="scrollToTop()">
+  <i data-lucide="arrow-up" size="20"></i>
+</button>
+
+<script>
+  lucide.createIcons();
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  window.addEventListener('scroll', function() {
+    const btn = document.getElementById('scrollTopBtn');
+    const header = document.getElementById('header');
+
+    if (window.scrollY > 250) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+
+    if (window.scrollY > 50) {
+      header.classList.add('scrolled');
+    } else {
+      header.classList.remove('scrolled');
+    }
+  });
+
+  const sections = document.querySelectorAll('section');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  sections.forEach(section => observer.observe(section));
+</script>
+
+</body>
+</html>
